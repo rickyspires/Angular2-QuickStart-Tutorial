@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Hero } from './hero';
+import { HeroService } from './hero-service';
 
 @Component({
   selector: 'app-root',
@@ -62,25 +63,35 @@ import { Hero } from './hero';
       margin-right: .8em;
       border-radius: 4px 0 0 4px;
     }
-  `]
+  `],
+  providers: [HeroService] //provide tells it to add a new instance
 })
-export class AppComponent {
-  title = 'Tour of Heroes';
-  heroes = HEROES;
-  selectedHero: Hero;
+export class AppComponent implements OnInit{
+
+  title = 'Tour of Heroes'; // title
+  heroes: Hero[]; //import service
+  selectedHero: Hero; //selected hero style
+    
+  //create a new hero method
+  //heroService = new HeroService(); // don't do this
+  constructor(private heroService: HeroService) { }
+
+  //life cycle hook - on page loads load the heroes method
+  ngOnInit(): void {
+    this.getHeroes();
+  }
+
+  // get all heros
+  getHeroes(): void {
+    //this.heroes = this.heroService.getHeroes();
+    //because we use (.then) promises we have to do it like this..
+    //you can do getHeroesSlowly() to check a slow speed
+    this.heroService.getHeroes().then(heroes => this.heroes = heroes);
+  }
+  
+  //selected hero
   onSelect(hero: Hero): void {
     this.selectedHero = hero;
   }
+
 }
-const HEROES: Hero[] = [
-  { id: 11, name: 'Mr. Nice' },
-  { id: 12, name: 'Narco' },
-  { id: 13, name: 'Bombasto' },
-  { id: 14, name: 'Celeritas' },
-  { id: 15, name: 'Magneta' },
-  { id: 16, name: 'RubberMan' },
-  { id: 17, name: 'Dynama' },
-  { id: 18, name: 'Dr IQ' },
-  { id: 19, name: 'Magma' },
-  { id: 20, name: 'Tornado' }
-];
